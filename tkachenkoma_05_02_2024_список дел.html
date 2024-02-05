@@ -1,0 +1,96 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список дел</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #headerWithImage {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    #headerImage {
+      margin-right: 10px;
+      width: 50px; 
+      height: 50px; 
+    }
+
+    ul {
+      list-style-type: decimal; 
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="headerWithImage">
+    <img id="headerImage" src="image.jpeg" alt="Изображение">
+    <h1>Список дел</h1>
+  </div>
+
+  <input type="text" id="newTask" placeholder="Добавить новое дело">
+  <button onclick="addTask()">Добавить</button>
+  <button onclick="clearList()">Очистить список</button>
+
+  <ul id="taskList">
+    
+  </ul>
+
+  <script>
+    function addTask() {
+      var taskInput = document.getElementById("newTask");
+      var taskList = document.getElementById("taskList");
+      var taskText = taskInput.value;
+
+      if (taskText.trim() !== "") {
+        var taskItem = document.createElement("li");
+        var currentDate = new Date();
+        taskItem.innerHTML = `<input type="checkbox" onchange="markTaskDone(this)"> ${taskText} (Добавлено: ${currentDate.toLocaleDateString()})`;
+        taskList.appendChild(taskItem);
+        taskInput.value = "";
+      }
+    }
+
+    function clearList() {
+      var taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+    }
+
+    function markTaskDone(checkbox) {
+      var taskItem = checkbox.parentNode;
+      if (checkbox.checked) {
+        taskItem.style.textDecoration = "line-through";
+      } else {
+        taskItem.style.textDecoration = "none";
+      }
+    }
+
+    function saveToFile() {
+      var taskList = document.getElementById("taskList");
+      var tasks = taskList.getElementsByTagName("li");
+      var taskTextArray = [];
+
+      for (var i = 0; i < tasks.length; i++) {
+        taskTextArray.push(tasks[i].textContent);
+      }
+
+      var blob = new Blob([taskTextArray.join("\n")], { type: "text/plain" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "todo_list.txt";
+      a.click();
+    }
+  </script>
+
+  <button onclick="saveToFile()">Сохранить в файл</button>
+
+</body>
+</html>
